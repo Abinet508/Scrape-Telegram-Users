@@ -90,7 +90,7 @@ if os.path.isfile('getmem_log.txt'):
                     a = 0
                     print('')
                     print('')
-                    print(ye+'Choose a group to scrape.')
+                    print(ye+'which group you would like to get members from ?')
                     
                     for i in channel:
                         print(gr+'['+str(a)+']', i.title)
@@ -100,11 +100,11 @@ if os.path.isfile('getmem_log.txt'):
                         continue
                     else: 
                     
-                        op = input(ye+'Enter a number (or press ENTER to skip): ')
+                        op = input(ye+'Enter the number of the group from the list: ')
 
                         opt = int(op)
                         print('')
-                        print(ye+'[+] Fetching Members...')
+                        print(ye+'[+] Getting members of '+channel[opt].title)
                         time.sleep(1)
                         target_group = channel[opt]
                         all_participants = []
@@ -150,7 +150,7 @@ if os.path.isfile('getmem_log.txt'):
                         time.sleep(1)
                         print(ye+'Please wait.....')
                         time.sleep(3)
-                        done = input(gr+'[+] Members scraped successfully. (Press enter to Add members)')
+                        done = input(gr+'[+] Members scraped successfully. (Press enter to Exit)')
                         await client.disconnect()
                 with client:
                     if not client.is_user_authorized:
