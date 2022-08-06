@@ -20,7 +20,7 @@ wt = (
  [[gr]]| |  / _` || ' \))| || '  \()/ _ \| |/ _` | 
   |_|  \__,_||_||_| |_||_|_|_| \___/|_|\__,_| 
            version : 1.0
-github.com/Ayscoopy [[re]][DOnt forget to leave a star]
+github.com/Abinet508 [[re]][DOnt forget to leave a star]
    '''
 )
 COLORS = {
