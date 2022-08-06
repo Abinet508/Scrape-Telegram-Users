@@ -114,7 +114,7 @@ if os.path.isfile('getmem_log.txt'):
                         if result==[]:
                             pass
 
-                        all_participants = await client.get_participants(target_group)
+                        all_participants = await client.get_participants(target_group,aggressive=True)
                         for user in all_participants:
                             try:
 
