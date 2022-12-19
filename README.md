@@ -14,14 +14,12 @@
 ``
 ### Additional Requirements
 ``
-* Create two folders in the root folder named `Environments` and `Sessions`.
-* In the `Environments` folder create a file named `.env`
-* Inside `.env` create to variables:
-- Password=put your password here if you enable two-step verification
-- phone_number=put your phone number here.
+* Inside `.env` update the variables:
+- Password=put your password there if you enable two-step verification
+- phone_number=put your phone number.
 
 > Note that phone_number and password are variables that needs to be placed inside the `.env` file separated by new line and they will be used when creating a new session.
- - place
+ 
 ``
 
 ### Installation
