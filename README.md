@@ -38,15 +38,10 @@
 
 ``
 * after finished setting up your environment 
-
-- Run  SessionCreater.py this will create unlimited session for you and make sure not to duplicate same session. This will cause flooding issue.   
-    - Create a different session and rename this session to `Scrapersession` and this session will be used to scrape telegram members. use telegram account that have a lot public and private groups. 
    
-- Then run scraper.py. 
+- Run scraper.py. 
  - wait until all groups are scraped.
  - no need to run scraper.py again unless you join new groups 
-
-- and finally run `myadd.py` and this will add all the scraped members to your group if you intend to add members to same group uncomment this line #if a.title=="Awash bank": and replace it with your own group title.   
 
 ``
 
