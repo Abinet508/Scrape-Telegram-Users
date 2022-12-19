@@ -6,7 +6,26 @@ from telethon.errors.rpcerrorlist import (PeerFloodError, UserNotMutualContactEr
                                           UserBotError, InputUserDeactivatedError)
 from telethon.tl.functions.channels import InviteToChannelRequest
 import time, os, sys, json
-import  csv
+from decouple import Config,RepositoryEnv
+from qrcode import QRCode
+path=os.path.dirname(__file__)
+
+qr = QRCode()
+DOTENV_FILE=os.path.join(path,'Environments\.env') 
+print(DOTENV_FILE)
+config = Config(RepositoryEnv(DOTENV_FILE))
+Password = config('Password')
+phone_number = config('phone_number')
+
+def gen_qr(token:str):
+    qr.clear()
+    qr.add_data(token)
+    qr.print_ascii()
+
+def display_url_as_qr(url):
+   # print(url)  
+    gen_qr(url)
+
 
 
 COLORS = {
@@ -27,121 +46,147 @@ elif sys.version_info[0] >= 3:
     telet = lambda :os.system('pip3 install -U telethon')
 
 telet()
-time.sleep(1)
 
-sessionc=0
+def JsonWriter(filename,Environment,Api_detail):
 
-if os.path.isfile('getmem_log.txt'):
-    with open(r'getmem_log.txt',encoding='UTF-8') as r:
-        data= csv.reader(r,delimiter=",",lineterminator="\n")
-      
-        if data.line_num==0:    
-            api_id = input('Enter api_id: ')
-            api_hash = input('Enter api_hash: ')
-            with open('getmem_log.txt', 'w') as a:
-                a.write(api_id + "," + api_hash)
-        
-        for line in data:
-            api_id=line[0]
-            api_hash=line[1]
-            if sessionc%10==9:
-                sessionc+=1
-                print(sessionc)
-            client = TelegramClient('anon0', api_id, api_hash)     
-            
-        
-            while True:
-            
-                async def main():
-                    print(gr+"Logged in with session :"+str(sessionc-1))   
-                    
-                    chats = []
-                    channel = []
-                    result = await client(GetDialogsRequest(
-                        offset_date=None,
-                        offset_id=0,
-                        offset_peer=InputPeerEmpty(),
-                        limit=200,
-                        hash=0
-                    ))
-                
-                    chats.extend(result.chats)
-                    for a in chats:
+
+    with open("{}\\{}".format(path,filename)) as file:
+        data = json.load(file)
+    file.close()
+    for Env in data:
+
+        try:
+            Env[Environment]= Api_detail
+            print(data)
+            with open("{}\\{}".format(path,filename), "w+") as file:
+                json.dump(data,file,indent=4)
+            file.close()
+        except:
+            Env={Environment:Api_detail}
+            with open("{}\\{}".format(path,filename), "w+") as file:
+                json.dump(data, file, indent=4)
+            file.close()
+
+async def main(client: TelegramClient):
+                    if(not client.is_connected()):
+                        await client.connect()
+                    #print(str( client.get_me(input_peer= True)))
+                    if(await client.get_me()==None):
+                        qr_login = await client.qr_login()
+                        print(client.is_connected())
+                        r = False
                         try:
-                            if True:
-                                channel.append(a)
+                            while not r:
+                                display_url_as_qr(qr_login.url)
+                                try:
+                                    r = await qr_login.wait()
+                                    try:
+                                        await client.sign_in(password=Password)
+                                    except:
+                                        pass    
+                                except:
+                                    await qr_login.recreate()
                         except:
-                            continue
+                            pass         
 
-                    a = 0
-                    print('')
-                    print('')
-                    print(ye+'which group you would like to get members from ?')
-                    
-                    for i in channel:
-                        print(gr+'['+str(a)+']', i.title)
-                        a += 1
-                    if False:
-                        print(ye+'Ok. skipping...')
-                        continue
-                    else: 
-                    
-                        op = input(ye+'Enter the number of the group from the list: ')
-
-                        opt = int(op)
+                    try:
+                        print(gr+"Logged in with session :"+str(client.get_me(input_peer= True)))   
                         print('')
-                        print(ye+'[+] Getting members of '+channel[opt].title)
-                        time.sleep(1)
-                        target_group = channel[opt]
-                        all_participants = []
-                        mem_details = []
-                        a=open('members.txt', 'r') 
-                        result=a.readlines() 
+                        chats = []
+                        channels = []
+                        result = await client(GetDialogsRequest(
+                            offset_date=None,
+                            offset_id=0,
+                            offset_peer=InputPeerEmpty(),
+                            limit=200,
+                            hash=0
+                        ))
+                    
+                        chats.extend(result.chats)
+                        for a in chats:
+                            try:
+                                if True:
+                                    channels.append(a)
+                            except:
+                                continue
+
+                        a = 0
+
                         if result==[]:
                             pass
 
-                        all_participants = await client.get_participants(target_group,aggressive=True)
-                        for user in all_participants:
+                        for channel in channels:
+                            mem_details = []
+                            with open('members.json', 'r') as newfile:
+                                    result=json.load(newfile)
+                            mem_details=[user["uid"] for user in result]
                             try:
+                                print(gr+'================================================================')  
+                                print(gr+'================================================================')
+                                print(gr+'['+str(a)+']', channel.title)
+                                print('================================================================')
+                                
 
-                                if user.id in result:
-                                    pass
-                                else:
-                                    if user.username:
-                                        username = user.username
-                                    else:
-                                        username = ""
-                                    if user.first_name:
-                                        firstname = user.first_name
-                                    else:
-                                        firstname = ""
-                                    if user.last_name:
-                                        lastname = user.last_name
-                                    else:
-                                        lastname = ""
+                                opt = int(a)
+                                a += 1
+                               
+                                print(ye+'[+] Getting members of '+channels[opt].title)
+                                time.sleep(1)
+                                target_group = channels[opt]
+                                all_participants = []
+                                all_participants = await client.get_participants(target_group,aggressive=True)
+                                for user in all_participants:
+                                    try:
 
-                                    new_mem = {
-                                        'uid': user.id,
-                                        'username': username,
-                                        'firstname': firstname,
-                                        'lastname': lastname,
-                                        'access_hash': user.access_hash
-                                    }
-                                    mem_details.append(new_mem)
-                            except ValueError:
-                                continue
-                        a.close()
-                        with open('members.txt', 'a') as w:
-                            json.dump(mem_details, w)
-                        time.sleep(1)
-                        print(ye+'Please wait.....')
-                        time.sleep(3)
-                        done = input(gr+'[+] Members scraped successfully. (Press enter to Exit)')
-                        await client.disconnect()
-                with client:
-                    if not client.is_user_authorized:
-                            continue
-                    else:
-                            
-                            client.loop.run_until_complete(main())
+                                        if user.id in mem_details:
+                                            print("user: %s is already added" % user.username)
+                                        else:
+                                            if user.username:
+                                                username = user.username
+                                            else:
+                                                username = ""
+                                            if user.first_name:
+                                                firstname = user.first_name
+                                            else:
+                                                firstname = ""
+                                            if user.last_name:
+                                                lastname = user.last_name
+                                            else:
+                                                lastname = ""
 
+                                            new_mem = {
+                                                'uid': user.id,
+                                                'username': username,
+                                                'firstname': firstname,
+                                                'lastname': lastname,
+                                                'access_hash': user.access_hash
+                                            }
+                                            result.append(new_mem)
+            #                                
+                                    except ValueError:
+                                        continue
+                                
+                                with open("members.json", "w") as file:
+                                    json.dump(result, file,indent=4)
+
+                                time.sleep(1)
+                                print(ye+'Please wait ...')
+                                print(ye+'Writing {} members to a file ...'.format(channel.title))
+                                time.sleep(3)
+                                print(ye+'================================================================')
+                                print('')
+                            except Exception as e:
+                                print(e)
+                                pass     
+                    except Exception as e:
+                        print(e)
+                    finally:
+                        await client.disconnect()    
+
+api_id = '4849078'
+api_hash = 'bd5f7c2c5ca67f09ed0d536826c05b7b'  
+client = TelegramClient('Sessions//Scrapersession',api_id,api_hash)                     
+client.loop.run_until_complete(main(client))
+newdetail={'api_id': api_id, 'api_hash': api_hash}      
+JsonWriter("getmem_log.json",'Scrapersession',newdetail) 
+time.sleep(300)  
