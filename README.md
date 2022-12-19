@@ -20,18 +20,6 @@
 
 > Note that phone_number and password are variables that needs to be placed inside the `.env` file separated by new line and they will be used when creating a new session.
  
-``
-
-### Installation
-
-`
-
-* pip install Telethon
-* pip install python-decouple
-* pip install qrcode
-
-`
-
 ## Usage
 
 ``
