@@ -86,12 +86,12 @@ async def main(client: TelegramClient):
                         ))
                     
                         chats.extend(result.chats)
-                        runsingle=True
+                        scrapesingle=True
                         grouptitle="group name"
                         for a in chats:
                             try:
                               
-                                if runsingle= True:
+                                if scrapesingle= True:
                                   if grouptitle ==a.title:
                                      channels.append(a)
                                      break
